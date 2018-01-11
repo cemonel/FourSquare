@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <!-- First Container -->
+    <div class="container-fluid bg-1 text-center">
+      <h3>What are u looking for?</h3>
+    </div>
+
+    <div class="container-fluid bg-2 text-center">
+
+        <form method="POST" class="post-form">{% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="save btn btn-default">Search</button>
+        </form>
+    </div>
+
+    <div class="container-fluid bg-3">
+            <h4 align="center"><b>Results</b></h4>
+            <table>
+              <tr>
+                <th></th>
+                <th>Venue</th>
+              </tr>
+                {% for venue in venues_list %}
+                    <tr>
+                        <td>{{venue}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+    </div>
+
+add{% endblock %}
