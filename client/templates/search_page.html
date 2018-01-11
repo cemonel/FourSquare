@@ -6,28 +6,50 @@
       <h3>What are u looking for?</h3>
     </div>
 
-    <div class="container-fluid bg-2 text-center">
+    <div class="grid-container bg-2 text-center">
 
-        <form method="POST" class="post-form">{% csrf_token %}
+            <div></div>
+
+        <div></div>
+                <form method="GET" class="post-form">{% csrf_token %}
             {{ form.as_p }}
+
             <button type="submit" class="save btn btn-default">Search</button>
-        </form>
+         </form>
+        <div>
+            {% for search in pre_searches%}
+                <p align="center" class="bg-2">
+                    <div class="post">
+                   <a href="?food={{search.food}}&location={{search.location}}" > - {{search.food}} in {{search.location}} </a>
+
+                    </div>
+                </p>
+            {%endfor%}
+        </div>
+        <div></div>
+        <div></div>
+
     </div>
 
     <div class="container-fluid bg-3">
-            <h4 align="center"><b>Results</b></h4>
+
+            <h3 align="center"><b>Results</b></h3>
             <table>
               <tr>
-                <th></th>
+
                 <th>Venue</th>
+                <th>Contact</th>
+                <th>Total Check-in</th>
               </tr>
                 {% for venue in venues_list %}
                     <tr>
-                        <td>{{venue}}</td>
+                        <td>{{venue.name}}</td>
+                        <td>{{venue.phone}}</td>
+                        <td>{{venue.checkin_count}}</td>
                     </tr>
                 {% endfor %}
             </table>
 
     </div>
 
-add{% endblock %}
+{% endblock %}
