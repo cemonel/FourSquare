@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container-fluid bg-1 text-center">
+        <img src={{venue_detail.icon}} height="40" width="40"/>
+
+      <h3>{{venue_detail.name}}</h3>
+    </div>
+
+    <div class="container-fluid bg-2 align-left">
+
+        <h5>Name: {{venue_detail.name}}</h5>
+        <h5>Phone: {{venue_detail.phone}}</h5>
+        <h5>Twitter: {{venue_detail.twitter}}</h5>
+        <h5>Facebook: {{venue_detail.facebook}}</h5>
+        <h4 class="bg-3">TIPS</h4>
+        {% for tip in venue_tips %}
+            <div>
+                {{tip.user.firstName}} {{tip.user.lastName}}:
+                {{tip.text}}
+            </div>
+        {% endfor %}
+    <span class="step-links">
+        <a href="?page={{previous_page_number}}">previous</a>
+        <a href="?page={{ next_page_number }}">next</a>
+    </span>
+
+    </div>
+
+
+
+
+{% endblock %}
