@@ -50,10 +50,10 @@
                 {% endfor %}
             </table>
 
-        {% if venues_list.has_other_pages %}
+         {% if venues_list.has_other_pages %}
           <ul class="pagination">
             {% if venues_list.has_previous %}
-              <li><a href="?page={{ venues_list.previous_page_number }}&food={{search.food}}&location={{search.location}}">&laquo;</a></li>
+              <li><a href="?page={{ venues_list.previous_page_number }}&location={{searched_location}}&food={{searched_food}}">&laquo;</a></li>
             {% else %}
               <li class="disabled"><span>&laquo;</span></li>
             {% endif %}
@@ -61,14 +61,14 @@
               {% if venues_list.number == i %}
                 <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
               {% else %}
-                <li><a href="?page={{ i }}&food={{search.food}}&location={{search.location}}">{{ i }}</a></li>
+              <li><a href="?page={{ i }}&location={{searched_location}}&food={{searched_food}}">{{ i }}</a></li>
               {% endif %}
-            {% endfor %}
-            {% if venues_list.has_next %}
-              <li><a href="?page={{ venues_list.next_page_number }}&food={{search.food}}&location={{search.location}}">&raquo;</a></li>
-            {% else %}
+              {% endfor %}
+              {% if venues_list.has_next %}
+              <li><a href="?page={{ venues_list.next_page_number }}&location={{searched_location}}&food={{searched_food}}">&raquo;</a></li>
+              {% else %}
               <li class="disabled"><span>&raquo;</span></li>
-            {% endif %}
+              {% endif %}
           </ul>
         {% endif %}
 

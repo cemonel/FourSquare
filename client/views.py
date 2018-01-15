@@ -11,11 +11,14 @@ def search_page(request):
 	if form.is_valid():
 		location = form.instance.location
 		food = form.instance.food
-		search = form.save()
-		search.save()
+		last_search = Search.objects.order_by()[::-1][0]
+		if last_search.location != location or last_search.food != food:
+			search = form.save()
+			search.save()
 		parameters = {
 			'near': location,
 			'query': food,
+			'limit': 100,
 			'oauth_token': 'BIH2RYEL3G20JYPXJX4LNZ01EL3VTMC0QXDNOTZKE5NZRAJL',
 			'v': '20180111'
 		}
@@ -36,9 +39,11 @@ def search_page(request):
 	else:
 		venues_list = []
 		form = SearchForm()
+		location = ""
+		food = ""
 
-	page = request.GET.get('page', 1)  # pagination
-	paginator = Paginator(venues_list, 5)
+	page = request.GET.get('page', 1)
+	paginator = Paginator(venues_list, 10)  # pagination
 	try:
 		venues_list = paginator.page(page)
 	except PageNotAnInteger:
@@ -53,7 +58,9 @@ def search_page(request):
 
 	return render(request, 'search_page.html', context={'form': form,
 														'venues_list': venues_list,
-														'pre_searches': previous_searches})
+														'pre_searches': previous_searches,
+														'searched_location': location,
+														'searched_food': food})
 
 
 def venue_detail(request, venue_id):
@@ -73,8 +80,6 @@ def venue_detail(request, venue_id):
 	venue_detail['icon'] = response['response']['venue']['categories'][0]['icon'].get('prefix', 'default') + "bg_32.png"
 	page = request.GET.get('page', 1)  # pagination
 	offset = 1 + 5 * (int(page)-1)
-	next_page_number = str(int(page) + 1)
-	previous_page_number = str(int(page) - 1)
 	parameters = {
 		'oauth_token': 'BIH2RYEL3G20JYPXJX4LNZ01EL3VTMC0QXDNOTZKE5NZRAJL',
 		'v': '20180111',
@@ -89,6 +94,4 @@ def venue_detail(request, venue_id):
 	venue_tips = response['response']['tips']["items"]
 
 	return render(request, 'venue_detail.html', context={'venue_detail': venue_detail, 'venue_tips': venue_tips,
-														 'page': page,
-														 'next_page_number': next_page_number,
-														 'previous_page_number': previous_page_number})
+														 'page': page})
