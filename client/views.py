@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from .forms import SearchForm
 from .models import Search
 import requests
@@ -27,35 +27,36 @@ def search_page(request):
 		venues_list = []
 		response = requests.get(request_url)
 		response = response.json()
-		venues = response["response"]["venues"]
+		venues = response.get("response").get("venues", [])
 
-		for venue in venues:
-			venue_info = {}
-			venue_info['id'] = venue.get('id')
-			venue_info['name'] = venue.get('name', "---")
-			venue_info['phone'] = venue['contact'].get("formattedPone", "---")
-			venue_info['checkin_count'] = venue['stats'].get('checkinsCount', "---")
-			venues_list.append(venue_info)
+		if venues:
+			for venue in venues:
+				venue_info = {}
+				venue_info['id'] = venue.get('id')
+				venue_info['name'] = venue.get('name', "---")
+				venue_info['phone'] = venue['contact'].get("formattedPone", "---")
+				venue_info['checkin_count'] = venue['stats'].get('checkinsCount', "---")
+				venues_list.append(venue_info)
 	else:
 		venues_list = []
 		form = SearchForm()
 		location = ""
 		food = ""
 
-	page = request.GET.get('page', 1)
-	paginator = Paginator(venues_list, 10)  # pagination
-	try:
-		venues_list = paginator.page(page)
-	except PageNotAnInteger:
-		venues_list = paginator.page(1)
-	except EmptyPage:
-		venues_list = paginator.page(paginator.num_pages)
+	if venues_list:
+		page = request.GET.get('page', 1)
+		paginator = Paginator(venues_list, 10)  # pagination
+		try:
+			venues_list = paginator.page(page)
+		except PageNotAnInteger:
+			venues_list = paginator.page(1)
+		except EmptyPage:
+			venues_list = paginator.page(paginator.num_pages)
 
 	if Search.objects.count() > 5:
 		previous_searches = Search.objects.order_by()[Search.objects.count() - 5:]
 
 	previous_searches = previous_searches[::-1]  # reverses list
-
 	return render(request, 'search_page.html', context={'form': form,
 														'venues_list': venues_list,
 														'pre_searches': previous_searches,

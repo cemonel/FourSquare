@@ -14,9 +14,10 @@
                 <form method="GET" class="post-form">{% csrf_token %}
             {{ form.as_p }}
 
-            <button type="submit" class="save btn btn-default">Search</button>
+            <button type="submit" class="save btn btn-default" name="search-button">Search</button>
          </form>
         <div>
+            <h3>Previous Searches:</h3>
             {% for search in pre_searches%}
                 <p align="center" class="bg-2">
                     <div class="post">
@@ -31,6 +32,8 @@
 
     </div>
 
+
+    {% if venues_list %}
     <div class="container-fluid bg-3">
 
             <h3 align="center"><b>Results</b></h3>
@@ -73,5 +76,7 @@
         {% endif %}
 
     </div>
+
+{% endif %}
 
 {% endblock %}
