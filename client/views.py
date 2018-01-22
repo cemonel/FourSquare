@@ -9,15 +9,11 @@ import urllib
 def search_page(request):
 	form = SearchForm(request.GET)
 	if form.is_valid():
-		location = form.instance.location
-		food = form.instance.food
-		last_search = Search.objects.order_by()[::-1][0]
-		if last_search.location != location or last_search.food != food:
-			search = form.save()
-			search.save()
+		form_location = form.cleaned_data['location']
+		form_venue = form.cleaned_data['venue']
 		parameters = {
-			'near': location,
-			'query': food,
+			'near': form_location,
+			'query': form_venue,
 			'limit': 100,
 			'oauth_token': 'BIH2RYEL3G20JYPXJX4LNZ01EL3VTMC0QXDNOTZKE5NZRAJL',
 			'v': '20180111'
@@ -37,12 +33,17 @@ def search_page(request):
 				venue_info['phone'] = venue['contact'].get("formattedPone", "---")
 				venue_info['checkin_count'] = venue['stats'].get('checkinsCount', "---")
 				venues_list.append(venue_info)
+			search = Search(location=form_location, venue=form_venue)
+			search.save()
+			no_results_by_search = False
+		else:
+			no_results_by_search = True
 	else:
 		venues_list = []
 		form = SearchForm()
-		location = ""
-		food = ""
-
+		form_location = ""
+		form_venue = ""
+		no_results_by_search = False
 	if venues_list:
 		page = request.GET.get('page', 1)
 		paginator = Paginator(venues_list, 10)  # pagination
@@ -53,15 +54,14 @@ def search_page(request):
 		except EmptyPage:
 			venues_list = paginator.page(paginator.num_pages)
 
-	if Search.objects.count() > 5:
-		previous_searches = Search.objects.order_by()[Search.objects.count() - 5:]
+	previous_searches = Search.objects.order_by("-id")[:5]
 
-	previous_searches = previous_searches[::-1]  # reverses list
 	return render(request, 'search_page.html', context={'form': form,
 														'venues_list': venues_list,
 														'pre_searches': previous_searches,
-														'searched_location': location,
-														'searched_food': food})
+														'searched_location': form_location,
+														'searched_venue': form_venue,
+														'no_results': no_results_by_search})
 
 
 def venue_detail(request, venue_id):

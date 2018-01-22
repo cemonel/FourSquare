@@ -1,8 +1,6 @@
-from .models import Search
 from django import forms
 
 
-class SearchForm(forms.ModelForm):
-	class Meta:
-		model = Search
-		fields = ('location', 'food', )
+class SearchForm(forms.Form):
+		venue = forms.CharField(max_length=100, required=True)
+		location = forms.CharField(max_length=100, required=True)

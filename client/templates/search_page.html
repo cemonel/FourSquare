@@ -2,13 +2,12 @@
 {% block content %}
 
     <!-- First Container -->
-    <div class="container-fluid bg-1 text-center">
-      <h3>What are u looking for?</h3>
+    <div class="container-fluid-without-padding bg-1 text-center">
+      <h4>What are u looking for?</h4>
     </div>
 
     <div class="grid-container bg-2 text-center">
-
-            <div></div>
+        <div></div>
 
         <div></div>
                 <form method="GET" class="post-form">{% csrf_token %}
@@ -21,7 +20,7 @@
             {% for search in pre_searches%}
                 <p align="center" class="bg-2">
                     <div class="post">
-                   <a href="?food={{search.food}}&location={{search.location}}" > - {{search.food}} in {{search.location}} </a>
+                   <a href="?venue={{search.venue}}&location={{search.location}}" > - {{search.venue}} in {{search.location}} </a>
 
                     </div>
                 </p>
@@ -56,7 +55,7 @@
          {% if venues_list.has_other_pages %}
           <ul class="pagination">
             {% if venues_list.has_previous %}
-              <li><a href="?page={{ venues_list.previous_page_number }}&location={{searched_location}}&food={{searched_food}}">&laquo;</a></li>
+              <li><a href="?page={{ venues_list.previous_page_number }}&location={{searched_location}}&venue={{searched_venue}}">&laquo;</a></li>
             {% else %}
               <li class="disabled"><span>&laquo;</span></li>
             {% endif %}
@@ -64,19 +63,20 @@
               {% if venues_list.number == i %}
                 <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
               {% else %}
-              <li><a href="?page={{ i }}&location={{searched_location}}&food={{searched_food}}">{{ i }}</a></li>
+              <li><a href="?page={{ i }}&location={{searched_location}}&venue={{searched_venue}}">{{ i }}</a></li>
               {% endif %}
               {% endfor %}
               {% if venues_list.has_next %}
-              <li><a href="?page={{ venues_list.next_page_number }}&location={{searched_location}}&food={{searched_food}}">&raquo;</a></li>
+              <li><a href="?page={{ venues_list.next_page_number }}&location={{searched_location}}&venue={{searched_venue}}">&raquo;</a></li>
               {% else %}
               <li class="disabled"><span>&raquo;</span></li>
               {% endif %}
           </ul>
         {% endif %}
-
     </div>
-
+    {% elif no_results %}
+        <h4 align="center" style="color:red;">No results founded</h4>
 {% endif %}
+
 
 {% endblock %}
