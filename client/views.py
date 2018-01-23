@@ -9,11 +9,11 @@ import urllib
 def search_page(request):
 	form = SearchForm(request.GET)
 	if form.is_valid():
-		form_location = form.cleaned_data['location']
-		form_venue = form.cleaned_data['venue']
+		form.location = form.cleaned_data['location']
+		form.venue = form.cleaned_data['venue']
 		parameters = {
-			'near': form_location,
-			'query': form_venue,
+			'near': form.location,
+			'query': form.venue,
 			'limit': 100,
 			'oauth_token': 'BIH2RYEL3G20JYPXJX4LNZ01EL3VTMC0QXDNOTZKE5NZRAJL',
 			'v': '20180111'
@@ -33,16 +33,18 @@ def search_page(request):
 				venue_info['phone'] = venue['contact'].get("formattedPone", "---")
 				venue_info['checkin_count'] = venue['stats'].get('checkinsCount', "---")
 				venues_list.append(venue_info)
-			search = Search(location=form_location, venue=form_venue)
+			if request.user.is_authenticated:
+				search = Search(location=form.location, venue=form.venue, user=request.user)
+			else:
+				search = Search(location=form.location, venue=form.venue)
 			search.save()
 			no_results_by_search = False
 		else:
 			no_results_by_search = True
 	else:
 		venues_list = []
-		form = SearchForm()
-		form_location = ""
-		form_venue = ""
+		form.location = ""
+		form.venue = ""
 		no_results_by_search = False
 	if venues_list:
 		page = request.GET.get('page', 1)
@@ -54,13 +56,15 @@ def search_page(request):
 		except EmptyPage:
 			venues_list = paginator.page(paginator.num_pages)
 
-	previous_searches = Search.objects.order_by("-id")[:5]
-
+	if request.user.is_authenticated():
+		previous_searches = Search.objects.filter(user=request.user).order_by("-id")[:5]
+	else:
+		previous_searches = Search.objects.order_by("-id")[:5]
 	return render(request, 'search_page.html', context={'form': form,
 														'venues_list': venues_list,
 														'pre_searches': previous_searches,
-														'searched_location': form_location,
-														'searched_venue': form_venue,
+														'searched_location': form.location,
+														'searched_venue': form.venue,
 														'no_results': no_results_by_search})
 
 

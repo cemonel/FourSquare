@@ -43,12 +43,14 @@
       padding-bottom: 10px;
   }
   .grid-container {
-          padding-top: 50px;
-      padding-bottom: 50px;
+          padding-top: 20px;
+      padding-bottom: 20px;
   display: grid;
   grid-template-columns: auto auto auto auto;
 }
-
+.black-type-form{
+    color: black;
+}
   .post-form{
       background-color: #474e5d;
       color: #000000;
@@ -98,9 +100,13 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav navbar-right">
-
-        <li><a href="">About</a></li>
-
+        {% if user.is_authenticated %}
+             <li><a href="">Hi,{{user.get_username}}</a></li>
+            <li><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
+        {% else %}
+            <li><a href="">SignUp</a></li>
+            <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+        {% endif %}
       </ul>
     </div>
   </div>
