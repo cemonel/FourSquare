@@ -10,3 +10,9 @@ class Search(models.Model):
 
 	def __str__(self):
 		return '%s  %s' % (self.location, self.venue)
+
+
+class Favorite(models.Model):
+
+	user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
+	venue_id = models.CharField(max_length=50)

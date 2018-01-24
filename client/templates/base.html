@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <!-- Theme Made By www.w3schools.com - No Copyright -->
-  <title>Bootstrap Theme Simply Me</title>
+  <title>Hipo FourSquare by Cem</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <style>
@@ -83,6 +84,16 @@
   tr:nth-child(even) {
       background-color: #dddddd;
   }
+  li{
+      font-size:12px;
+  }
+  .helptext{
+
+      font-size: 12px;
+  }
+
+  ul.errorlist {display:none;}
+
   </style>
 </head>
 <body>
@@ -104,7 +115,7 @@
              <li><a href="">Hi,{{user.get_username}}</a></li>
             <li><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
         {% else %}
-            <li><a href="">SignUp</a></li>
+            <li><a href="{% url 'signup' %}">SignUp</a></li>
             <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
         {% endif %}
       </ul>

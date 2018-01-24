@@ -1,7 +1,8 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import SearchForm
-from .models import Search
+from .models import Search, Favorite
+from django.urls import reverse
 import requests
 import urllib
 
@@ -32,6 +33,8 @@ def search_page(request):
 				venue_info['name'] = venue.get('name', "---")
 				venue_info['phone'] = venue['contact'].get("formattedPone", "---")
 				venue_info['checkin_count'] = venue['stats'].get('checkinsCount', "---")
+				if request.user.is_authenticated:
+					venue_info['is_fav'] = Favorite.objects.filter(user=request.user, venue_id=venue.get('id'))
 				venues_list.append(venue_info)
 			if request.user.is_authenticated:
 				search = Search(location=form.location, venue=form.venue, user=request.user)
@@ -56,7 +59,7 @@ def search_page(request):
 		except EmptyPage:
 			venues_list = paginator.page(paginator.num_pages)
 
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		previous_searches = Search.objects.filter(user=request.user).order_by("-id")[:5]
 	else:
 		previous_searches = Search.objects.order_by("-id")[:5]
@@ -98,5 +101,20 @@ def venue_detail(request, venue_id):
 	response = response.json()
 	venue_tips = response['response']['tips']["items"]
 
-	return render(request, 'venue_detail.html', context={'venue_detail': venue_detail, 'venue_tips': venue_tips,
+	return render(request, 'venue_detail.html', context={'venue_detail': venue_detail,
+														 'venue_tips': venue_tips,
 														 'page': page})
+
+
+def add_favorite(request, venue_id):
+	favorite = Favorite.objects.filter(user=request.user, venue_id=venue_id)
+	location = request.GET.get("location")
+	venue = request.GET.get("venue")
+	if favorite:
+		favorite.delete()
+	else:
+		new_fav = Favorite(user=request.user, venue_id=venue_id)
+		new_fav.save()
+	response = redirect('search_page')
+	response['Location'] += '?location=' + location + '&venue=' + venue
+	return response

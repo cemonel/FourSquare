@@ -43,20 +43,30 @@
             <h3 align="center"><b>Results</b></h3>
             <table>
               <tr>
-
+                {% if user.is_authenticated %}
+                    <th>Fav.</th>
+                {% endif %}
                 <th>Venue</th>
                 <th>Contact</th>
                 <th>Total Check-in</th>
               </tr>
                 {% for venue in venues_list %}
                     <tr>
-                        <td><a href="venue_detail/{{venue.id}}" >{{venue.name}}</a></td>
+                        {% if user.is_authenticated %}
+                            {%if venue.is_fav%}
+                                <td><a href="{% url 'add_favorite' venue.id %}?venue={{searched_venue}}&location={{searched_location}}" class="fa fa-heart" style="color:red;"></a></td>
+                            {% else %}
+                                <td><a href="{% url 'add_favorite' venue.id %}?venue={{searched_venue}}&location={{searched_location}}" class="fa fa-heart"></a></td>
+                            {% endif %}
+                        {% endif %}
+                        <td><a href="venue_detail/{{venue.id}}" >  {{venue.name}}</a></td>
                         <td>{{venue.phone}}</td>
                         <td>{{venue.checkin_count}}</td>
                     </tr>
                 {% endfor %}
             </table>
 
+    <!-- Pagination -->
          {% if venues_list.has_other_pages %}
           <ul class="pagination">
             {% if venues_list.has_previous %}
